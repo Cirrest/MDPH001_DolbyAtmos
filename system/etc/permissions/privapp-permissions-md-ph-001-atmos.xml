@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Cirrest -->
+<permissions>
+    <privapp-permissions package="com.cirrest.dolbycontrol.mdph001">
+        <permission name="android.permission.MODIFY_AUDIO_ROUTING" />
+    </privapp-permissions>
+    <privapp-permissions package="com.cirrest.atmos.DAX2">
+        <permission name="android.permission.MODIFY_AUDIO_ROUTING" />
+        <permission name="android.permission.MODIFY_DEFAULT_AUDIO_EFFECTS" />
+    </privapp-permissions>
+</permissions>
