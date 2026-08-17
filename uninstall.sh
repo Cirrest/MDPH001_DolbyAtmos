@@ -1,17 +1,28 @@
 #!/system/bin/sh
-# Author: Cirrest
 
-RUNTIME_DIR=/data/adb/md_ph_001_dolby_atmos
+MODDIR=${0%/*}
 
-for name in codec dms; do
-    pid_file="$RUNTIME_DIR/$name.pid"
-    [ -f "$pid_file" ] || continue
-    pid=$(/system/bin/cat "$pid_file" 2>/dev/null)
-    case "$pid" in
-        ''|*[!0-9]*) ;;
-        *) /system/bin/kill "$pid" 2>/dev/null ;;
-    esac
+if [ -f "$MODDIR/logs/watchdog.pid" ]; then
+    kill "$(cat "$MODDIR/logs/watchdog.pid")" 2>/dev/null
+fi
+
+for request in /data/user/*/com.cirrest.dolbycontrol.mdph001/files/restart_audio_service.request; do
+    [ -f "$request" ] && rm -f "$request"
 done
 
-/system/bin/rm -rf "$RUNTIME_DIR"
+for marker in /data/user/*/com.cirrest.dolbycontrol.mdph001/files/global_processing.disabled; do
+    [ -f "$marker" ] && rm -f "$marker"
+done
 
+if [ -f "$MODDIR/.usb-persist-config" ]; then
+    usb_persist_config="$(cat "$MODDIR/.usb-persist-config")"
+    if [ -n "$usb_persist_config" ]; then
+        resetprop -n persist.sys.usb.config "$usb_persist_config"
+    else
+        resetprop -d persist.sys.usb.config
+    fi
+fi
+
+if [ -f "$MODDIR/.reenable-atmos-on-uninstall" ]; then
+    rm -f /data/adb/modules/Atmos/disable
+fi
